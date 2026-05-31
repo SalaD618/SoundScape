@@ -13,6 +13,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+import javax.inject.Named
+
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -56,4 +58,26 @@ object NetworkModule {
     fun provideLastFmApi(retrofit: Retrofit): LastFmApi {
         return retrofit.create(LastFmApi::class.java)
     }
+
+//    @Provides
+//    @Singleton
+//    @Named("wikimedia")
+//    fun provideWikimediaRetrofit(
+//        gson: Gson,
+//        okHttpClient: OkHttpClient
+//    ): Retrofit {
+//        return Retrofit.Builder()
+//            .baseUrl("https://en.wikipedia.org/")
+//            .client(okHttpClient)
+//            .addConverterFactory(GsonConverterFactory.create(gson))
+//            .build()
+//    }
+//
+//    @Provides
+//    @Singleton
+//    fun provideWikimediaApi(
+//        @Named("wikimedia") retrofit: Retrofit
+//    ): WikimediaApi {
+//        return retrofit.create(WikimediaApi::class.java)
+//    }
 }

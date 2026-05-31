@@ -4,16 +4,25 @@ import com.example.soundscape.domain.model.Artist
 import com.example.soundscape.domain.model.ArtistDetails
 
 fun ArtistDto.toArtist(): Artist {
-    val bestImage = image
+
+    val imageUrl = image
         ?.lastOrNull { !it.url.isNullOrBlank() }
         ?.url
         .orEmpty()
+
+    val finalImage = if (
+        imageUrl.contains("2a96cbd8b46e442fc41c2b86b821562f")
+    ) {
+        ""
+    } else {
+        imageUrl
+    }
 
     return Artist(
         name = name.orEmpty(),
         listeners = listeners ?: "0",
         playcount = playcount ?: "0",
-        imageUrl = bestImage,
+        imageUrl = finalImage,
         url = url.orEmpty()
     )
 }

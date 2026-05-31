@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 class MusicRepository @Inject constructor(
     private val api: LastFmApi,
+//    private val wikimediaApi: WikimediaApi,
     private val favoriteArtistDao: FavoriteArtistDao
 ) {
     // ─── Remote ───────────────────────────────────────────────
@@ -81,4 +82,16 @@ class MusicRepository @Inject constructor(
     fun isArtistFavorite(artistName: String): Flow<Boolean> {
         return favoriteArtistDao.isFavorite(artistName)
     }
+
+//    suspend fun getArtistImage(artistName: String): String {
+//        return try {
+//            wikimediaApi.getArtistImage(titles = artistName)
+//                .query?.pages?.values
+//                ?.firstOrNull()
+//                ?.thumbnail?.source
+//                .orEmpty()
+//        } catch (e: Exception) {
+//            ""
+//        }
+//    }
 }

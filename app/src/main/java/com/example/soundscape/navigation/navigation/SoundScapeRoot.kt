@@ -79,7 +79,9 @@ fun SoundScapeRoot() {
                 composable(Screen.Home.route) {
                     HomeScreen(
                         onArtistClick = { artistName ->
-                            navController.navigate(Screen.Details.createRoute(artistName))
+                            navController.navigate(
+                                Screen.Details.createRoute(artistName)
+                            )
                         }
                     )
                 }
@@ -87,7 +89,11 @@ fun SoundScapeRoot() {
                 composable(Screen.Search.route) {
                     SearchScreen(
                         onArtistClick = { artistName ->
-                            navController.navigate(Screen.Details.createRoute(artistName))
+                            navController.navigate(
+                                Screen.Details.createRoute(
+                                    artistName
+                                )
+                            )
                         }
                     )
                 }
@@ -95,7 +101,9 @@ fun SoundScapeRoot() {
                 composable(Screen.Favorites.route) {
                     FavoritesScreen(
                         onArtistClick = { artistName ->
-                            navController.navigate(Screen.Details.createRoute(artistName))
+                            navController.navigate(
+                                Screen.Details.createRoute(artistName)
+                            )
                         }
                     )
                 }
@@ -105,8 +113,12 @@ fun SoundScapeRoot() {
                 }
 
                 composable(Screen.Details.route) { backStackEntry ->
-                    val artistName = backStackEntry.arguments?.getString("artistName").orEmpty()
-                    DetailsScreen(artistName = artistName)
+                    val artistName =
+                        backStackEntry.arguments?.getString("artistName").orEmpty()
+
+                    DetailsScreen(
+                        artistName = artistName
+                    )
                 }
             }
         }

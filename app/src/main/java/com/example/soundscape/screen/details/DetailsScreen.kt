@@ -27,12 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.soundscape.viewmodel.DetailsViewModel
+import coil3.compose.AsyncImage
 
 @Composable
 fun DetailsScreen(
     artistName: String,
+//    imageUrl: String = "",
     viewModel: DetailsViewModel = hiltViewModel()
-) {
+){
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(artistName) {
@@ -74,6 +76,13 @@ fun DetailsScreen(
                         .padding(24.dp)
                         .padding(bottom = 80.dp)
                 ) {
+                    AsyncImage(
+                        model = artist.imageUrl,
+                        contentDescription = artist.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                    )
                     Text(
                         text = artist.name,
                         style = MaterialTheme.typography.headlineLarge

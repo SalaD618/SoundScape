@@ -80,7 +80,9 @@ fun FavoritesScreen(
                 ) { artist ->
                     ArtistCard(
                         artist = artist,
-                        onClick = { onArtistClick(artist.name) }
+                        onClick = {
+                            onArtistClick(artist.name)
+                        }
                     )
                 }
             }

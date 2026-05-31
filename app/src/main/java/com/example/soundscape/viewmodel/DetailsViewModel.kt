@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
@@ -34,23 +35,27 @@ class DetailsViewModel @Inject constructor(
                 )
 
                 if (apiKeyResourceId == 0) {
-                    throw IllegalStateException("LASTFM_API_KEY is missing from local.properties")
+                    throw IllegalStateException("LASTFM_API_KEY is missing")
                 }
 
                 val artist = repository.getArtistDetails(
+
                     artistName = artistName,
                     apiKey = context.getString(apiKeyResourceId)
                 )
+                Log.d("DETAILS_IMAGE", artist.imageUrl)
 
                 _uiState.value = DetailsUiState(
                     isLoading = false,
                     artist = artist
                 )
 
-                // Observe favorite status reactively
                 repository.isArtistFavorite(artistName).collect { isFav ->
-                    _uiState.value = _uiState.value.copy(isFavorite = isFav)
+                    _uiState.value = _uiState.value.copy(
+                        isFavorite = isFav
+                    )
                 }
+
             } catch (e: Exception) {
                 _uiState.value = DetailsUiState(
                     isLoading = false,
@@ -78,4 +83,15 @@ class DetailsViewModel @Inject constructor(
             }
         }
     }
+//    suspend fun fetchWikimediaImage(artistName: String): String {
+//        return try {
+//            val response = api.getWikimediaImage(artistName)
+//            response.query?.pages?.values
+//                ?.firstOrNull()
+//                ?.thumbnail?.source
+//                .orEmpty()
+//        } catch (e: Exception) {
+//            ""
+//        }
+//    }
 }

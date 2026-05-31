@@ -21,10 +21,19 @@ sealed class Screen(
     data object Settings : Screen("settings", "Settings", Icons.Default.Settings)
 
 
-    data object Details : Screen("details/{artistName}", "Details", Icons.Default.Home) {
-        fun createRoute(artistName: String): String {
-            return "details/${Uri.encode(artistName)}"
+//    data object Details : Screen("details/{artistName}", "Details", Icons.Default.Home) {
+//        fun createRoute(artistName: String): String {
+//            return "details/${Uri.encode(artistName)}"
+//        }
+//    }
+        data object Details : Screen(
+            "details/{artistName}",
+            "Details",
+            Icons.Default.Home
+        ) {
+            fun createRoute(artistName: String): String {
+                return "details/${Uri.encode(artistName)}"
+            }
         }
-    }
 }
 
