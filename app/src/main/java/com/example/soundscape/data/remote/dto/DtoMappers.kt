@@ -25,8 +25,8 @@ fun ArtistInfoDto.toArtistDetails(): ArtistDetails {
 
     return ArtistDetails(
         name = name.orEmpty(),
-        listeners = listeners ?: "0",
-        playcount = playcount ?: "0",
+        listeners = stats?.listeners ?: "0",
+        playcount = stats?.playcount ?: "0",
         imageUrl = bestImage,
         summary = bio?.summary.orEmpty(),
         tags = tags?.tag

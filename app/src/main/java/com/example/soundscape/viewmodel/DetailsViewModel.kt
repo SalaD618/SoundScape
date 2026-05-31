@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.soundscape.data.repository.MusicRepository
+import com.example.soundscape.domain.model.Artist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,10 +46,34 @@ class DetailsViewModel @Inject constructor(
                     isLoading = false,
                     artist = artist
                 )
+
+                // Observe favorite status reactively
+                repository.isArtistFavorite(artistName).collect { isFav ->
+                    _uiState.value = _uiState.value.copy(isFavorite = isFav)
+                }
             } catch (e: Exception) {
                 _uiState.value = DetailsUiState(
                     isLoading = false,
                     errorMessage = e.message ?: "Something went wrong"
+                )
+            }
+        }
+    }
+
+    fun toggleFavorite() {
+        val current = _uiState.value.artist ?: return
+        viewModelScope.launch {
+            if (_uiState.value.isFavorite) {
+                repository.removeFavorite(current.name)
+            } else {
+                repository.addFavorite(
+                    Artist(
+                        name = current.name,
+                        listeners = current.listeners,
+                        playcount = current.playcount,
+                        imageUrl = current.imageUrl,
+                        url = current.url
+                    )
                 )
             }
         }
