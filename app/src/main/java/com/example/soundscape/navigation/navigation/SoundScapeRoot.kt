@@ -21,6 +21,7 @@ import com.example.soundscape.screen.home.HomeScreen
 import com.example.soundscape.screen.search.SearchScreen
 import com.example.soundscape.screen.settings.SettingsScreen
 import com.example.soundscape.screen.details.DetailsScreen
+import com.example.soundscape.screen.stats.StatsScreen
 import com.example.soundscape.ui.theme.SoundScapeTheme
 import com.example.soundscape.viewmodel.SettingsViewModel
 
@@ -36,6 +37,7 @@ fun SoundScapeRoot() {
             Screen.Home,
             Screen.Search,
             Screen.Favorites,
+            Screen.Stats,
             Screen.Settings
         )
 
@@ -108,6 +110,10 @@ fun SoundScapeRoot() {
                     )
                 }
 
+                composable(Screen.Stats.route) {
+                    StatsScreen()
+                }
+
                 composable(Screen.Settings.route) {
                     SettingsScreen()
                 }
@@ -120,6 +126,7 @@ fun SoundScapeRoot() {
                         artistName = artistName
                     )
                 }
+
             }
         }
     }

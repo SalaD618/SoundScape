@@ -5,6 +5,7 @@ import com.example.soundscape.data.remote.dto.TopArtistsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 import com.example.soundscape.data.remote.dto.ArtistInfoResponseDto
+import com.example.soundscape.data.remote.dto.SimilarArtistsResponseDto
 
 interface LastFmApi {
 
@@ -32,4 +33,14 @@ interface LastFmApi {
         @Query("api_key") apiKey: String,
         @Query("format") format: String = "json"
     ): ArtistInfoResponseDto
+
+
+    @GET("2.0/")
+    suspend fun getSimilarArtists(
+        @Query("method") method: String = "artist.getsimilar",
+        @Query("artist") artist: String,
+        @Query("api_key") apiKey: String,
+        @Query("format") format: String = "json",
+        @Query("limit") limit: Int = 5
+    ): SimilarArtistsResponseDto
 }

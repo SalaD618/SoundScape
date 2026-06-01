@@ -79,6 +79,19 @@ class MusicRepository @Inject constructor(
         favoriteArtistDao.deleteFavoriteByName(artistName)
     }
 
+    suspend fun getSimilarArtists(
+        artistName: String,
+        apiKey: String
+    ): List<Artist> {
+
+        return api.getSimilarArtists(
+            artist = artistName,
+            apiKey = apiKey
+        ).similarArtists.artist.map {
+            it.toArtist()
+        }
+    }
+
     fun isArtistFavorite(artistName: String): Flow<Boolean> {
         return favoriteArtistDao.isFavorite(artistName)
     }

@@ -45,9 +45,15 @@ class DetailsViewModel @Inject constructor(
                 )
                 Log.d("DETAILS_IMAGE", artist.imageUrl)
 
+                val similarArtists = repository.getSimilarArtists(
+                    artistName = artistName,
+                    apiKey = context.getString(apiKeyResourceId)
+                )
+
                 _uiState.value = DetailsUiState(
                     isLoading = false,
-                    artist = artist
+                    artist = artist,
+                    similarArtists = similarArtists
                 )
 
                 repository.isArtistFavorite(artistName).collect { isFav ->

@@ -29,6 +29,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.soundscape.viewmodel.DetailsViewModel
 import coil3.compose.AsyncImage
 
+
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+
 @Composable
 fun DetailsScreen(
     artistName: String,
@@ -124,6 +136,60 @@ fun DetailsScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 8.dp)
                     )
+                    if (uiState.similarArtists.isNotEmpty()) {
+
+                        Text(
+                            text = "Similar Artists",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(top = 24.dp)
+                        )
+
+                        LazyRow(
+                            modifier = Modifier.padding(top = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+
+                            items(uiState.similarArtists) { similarArtist ->
+
+                                Card(
+                                    onClick = {
+                                        // navigate la artistul similar
+                                    },
+                                    modifier = Modifier.width(160.dp),
+                                    shape = RoundedCornerShape(16.dp),
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 4.dp
+                                    )
+                                ) {
+
+                                    Column {
+
+                                        AsyncImage(
+                                            model = similarArtist.imageUrl,
+                                            contentDescription = similarArtist.name,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(160.dp)
+                                                .clip(
+                                                    RoundedCornerShape(
+                                                        topStart = 16.dp,
+                                                        topEnd = 16.dp
+                                                    )
+                                                )
+                                        )
+
+                                        Text(
+                                            text = similarArtist.name,
+                                            modifier = Modifier.padding(12.dp),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            maxLines = 2
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 FloatingActionButton(
