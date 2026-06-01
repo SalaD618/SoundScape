@@ -25,31 +25,33 @@ class StatsViewModel @Inject constructor(
 
     private fun observeFavorites() {
         viewModelScope.launch {
-
             repository.getFavoriteArtists()
                 .collectLatest { artists ->
 
-                    val topByPlaycount =
-                        artists.maxByOrNull {
-                            it.playcount.toLongOrNull() ?: 0L
-                        }
+                    val topByPlaycount = artists
+                        .sortedByDescending { it.playcount.toLongOrNull() ?: 0L }
+                        .take(5)
 
-                    val topByListeners =
-                        artists.maxByOrNull {
-                            it.listeners.toLongOrNull() ?: 0L
-                        }
+                    val topByListeners = artists
+                        .sortedByDescending { it.listeners.toLongOrNull() ?: 0L }
+                        .take(5)
+
+                    val totalPlaycount = artists.sumOf { it.playcount.toLongOrNull() ?: 0L }
+                    val avgPlaycount = if (artists.isNotEmpty()) totalPlaycount / artists.size else 0L
+
+                    val topArtist = topByPlaycount.firstOrNull()
+                    val topListenerArtist = topByListeners.firstOrNull()
 
                     _uiState.value = StatsUiState(
                         totalFavorites = artists.size,
-
-                        topArtist =
-                            topByPlaycount?.name.orEmpty(),
-
-                        topPlaycount =
-                            topByPlaycount?.playcount.orEmpty(),
-
-                        topListeners =
-                            topByListeners?.listeners.orEmpty()
+                        topArtist = topArtist?.name.orEmpty(),
+                        topPlaycount = topArtist?.playcount.orEmpty(),
+                        topListeners = topListenerArtist?.listeners.orEmpty(),
+                        allFavorites = artists,
+                        topByPlaycount = topByPlaycount,
+                        topByListeners = topByListeners,
+                        avgPlaycount = avgPlaycount,
+                        totalPlaycount = totalPlaycount
                     )
                 }
         }
