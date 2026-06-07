@@ -1,5 +1,6 @@
 package com.example.soundscape.di
 
+import com.example.soundscape.data.remote.api.DeezerApi
 import com.example.soundscape.data.remote.api.LastFmApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -20,6 +21,7 @@ import javax.inject.Named
 object NetworkModule {
 
     private const val BASE_URL = "https://ws.audioscrobbler.com/"
+    private const val DEEZER_BASE_URL = "https://api.deezer.com/"
 
     @Provides
     @Singleton
@@ -57,6 +59,28 @@ object NetworkModule {
     @Singleton
     fun provideLastFmApi(retrofit: Retrofit): LastFmApi {
         return retrofit.create(LastFmApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Named("deezer")
+    fun provideDeezerRetrofit(
+        gson: Gson,
+        okHttpClient: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(DEEZER_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeezerApi(
+        @Named("deezer") retrofit: Retrofit
+    ): DeezerApi {
+        return retrofit.create(DeezerApi::class.java)
     }
 
 //    @Provides

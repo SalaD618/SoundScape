@@ -27,16 +27,24 @@ fun ArtistDto.toArtist(): Artist {
     )
 }
 fun ArtistInfoDto.toArtistDetails(): ArtistDetails {
-    val bestImage = image
+    val imageUrl = image
         ?.lastOrNull { !it.url.isNullOrBlank() }
         ?.url
         .orEmpty()
+
+    val finalImage = if (
+        imageUrl.contains("2a96cbd8b46e442fc41c2b86b821562f")
+    ) {
+        ""
+    } else {
+        imageUrl
+    }
 
     return ArtistDetails(
         name = name.orEmpty(),
         listeners = stats?.listeners ?: "0",
         playcount = stats?.playcount ?: "0",
-        imageUrl = bestImage,
+        imageUrl = finalImage,
         summary = bio?.summary.orEmpty(),
         tags = tags?.tag
             ?.mapNotNull { it.name }

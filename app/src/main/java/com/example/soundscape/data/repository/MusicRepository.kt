@@ -2,6 +2,7 @@ package com.example.soundscape.data.repository
 
 import com.example.soundscape.data.local.dao.FavoriteArtistDao
 import com.example.soundscape.data.local.entity.FavoriteArtistEntity
+import com.example.soundscape.data.remote.api.DeezerApi
 import com.example.soundscape.data.remote.api.LastFmApi
 import com.example.soundscape.data.remote.dto.toArtist
 import com.example.soundscape.data.remote.dto.toArtistDetails
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 class MusicRepository @Inject constructor(
     private val api: LastFmApi,
-//    private val wikimediaApi: WikimediaApi,
+    private val deezerApi: DeezerApi,
     private val favoriteArtistDao: FavoriteArtistDao
 ) {
     // ─── Remote ───────────────────────────────────────────────
@@ -22,7 +23,9 @@ class MusicRepository @Inject constructor(
         return api.getTopArtists(
             apiKey = apiKey,
             limit = 10
-        ).artists.artist.map { it.toArtist() }
+        ).artists.artist.map { artistDto ->
+            artistDto.toArtist().withDeezerImage()
+        }
     }
 
     suspend fun searchArtists(
@@ -34,17 +37,25 @@ class MusicRepository @Inject constructor(
             artist = query,
             apiKey = apiKey,
             limit = 10
-        ).results.artistMatches.artist.map { it.toArtist() }
+        ).results.artistMatches.artist.map { artistDto ->
+            artistDto.toArtist().withDeezerImage()
+        }
     }
 
     suspend fun getArtistDetails(
         artistName: String,
         apiKey: String
     ): ArtistDetails {
-        return api.getArtistInfo(
+        val details = api.getArtistInfo(
             artist = artistName,
             apiKey = apiKey
         ).artist.toArtistDetails()
+
+        return details.copy(
+            imageUrl = details.imageUrl.ifBlank {
+                getArtistImageUrl(details.name)
+            }
+        )
     }
 
     // ─── Favorites (Room) ─────────────────────────────────────
@@ -87,8 +98,8 @@ class MusicRepository @Inject constructor(
         return api.getSimilarArtists(
             artist = artistName,
             apiKey = apiKey
-        ).similarArtists.artist.map {
-            it.toArtist()
+        ).similarArtists.artist.map { artistDto ->
+            artistDto.toArtist().withDeezerImage()
         }
     }
 
@@ -96,15 +107,29 @@ class MusicRepository @Inject constructor(
         return favoriteArtistDao.isFavorite(artistName)
     }
 
-//    suspend fun getArtistImage(artistName: String): String {
-//        return try {
-//            wikimediaApi.getArtistImage(titles = artistName)
-//                .query?.pages?.values
-//                ?.firstOrNull()
-//                ?.thumbnail?.source
-//                .orEmpty()
-//        } catch (e: Exception) {
-//            ""
-//        }
-//    }
+    private suspend fun Artist.withDeezerImage(): Artist {
+        if (imageUrl.isNotBlank()) return this
+
+        return copy(
+            imageUrl = getArtistImageUrl(name)
+        )
+    }
+
+    private suspend fun getArtistImageUrl(artistName: String): String {
+        if (artistName.isBlank()) return ""
+
+        return try {
+            val response = deezerApi.searchArtist(artistName)
+            val artist = response.data.firstOrNull {
+                it.name.equals(artistName, ignoreCase = true)
+            } ?: response.data.firstOrNull()
+
+            artist?.pictureXl
+                ?: artist?.pictureBig
+                ?: artist?.pictureMedium
+                ?: ""
+        } catch (e: Exception) {
+            ""
+        }
+    }
 }
